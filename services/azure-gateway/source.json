@@ -1,0 +1,6 @@
+[
+  {
+    "source": "configs/gateway/azure-gateway/config.json",
+    "target": "./services/azure-gateway/config.json"
+  }
+]
