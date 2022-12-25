@@ -4,6 +4,7 @@ from typing import List
 from framework.clients.http_client import HttpClient
 from framework.configuration.configuration import Configuration
 from framework.logger.providers import get_logger
+import httpx
 
 logger = get_logger(__name__)
 
@@ -13,8 +14,6 @@ class ContainerRegistryClient:
         self,
         configuration: Configuration
     ):
-        self.__http_client = HttpClient()
-
         self.__registry_url = configuration.azure_container_registry.get(
             'registry_url')
         self.__registry_username = configuration.azure_container_registry.get(
@@ -22,7 +21,7 @@ class ContainerRegistryClient:
         self.__registry_password = configuration.azure_container_registry.get(
             'registry_password')
 
-    def get_auth_headers(
+    def __get_auth_headers(
         self
     ) -> dict:
 
@@ -38,12 +37,12 @@ class ContainerRegistryClient:
     ) -> dict:
 
         endpoint = self.__registry_url + '/acr/v1/_catalog'
-        logger.info(f'Azure endpoint: {endpoint}')
+        logger.info(f'Endpoint: {endpoint}')
 
-        response = await self.__http_client.get(
-            url=endpoint,
-            headers=self.get_auth_headers(),
-            timeout=None)
+        async with httpx.AsyncClient(timeout=None) as client:
+            response = await client.get(
+                url=endpoint,
+                headers=self.__get_auth_headers())
 
         logger.info(f'Response code: {response.status_code}')
         return response.json()
@@ -54,12 +53,13 @@ class ContainerRegistryClient:
     ) -> List[dict]:
 
         endpoint = f'{self.__registry_url}/acr/v1/{repository_name}/_manifests'
-        logger.info(f'Azure endpoint: {endpoint}')
+        logger.info(f'Endpoint: {endpoint}')
 
-        response = await self.__http_client.get(
-            url=endpoint,
-            headers=self.get_auth_headers(),
-            timeout=None)
+        async with httpx.AsyncClient(timeout=None) as client:
+            response = await client.get(
+                url=endpoint,
+                headers=self.__get_auth_headers(),
+                timeout=None)
 
         logger.info(f'Response code: {response.status_code}')
         return response.json()
@@ -71,12 +71,13 @@ class ContainerRegistryClient:
     ) -> bool:
 
         endpoint = f'{self.__registry_url}/v2/{repository}/manifests/{id}'
-        logger.info(f'Azure Endpoint: {endpoint}')
+        logger.info(f'Endpoint: {endpoint}')
 
-        response = await self.__http_client.delete(
-            url=endpoint,
-            headers=self.get_auth_headers(),
-            timeout=None)
+        async with httpx.AsyncClient(timeout=None) as client:
+            response = await client.delete(
+                url=endpoint,
+                headers=self.__get_auth_headers(),
+                timeout=None)
 
         logger.info(f'Response code: {response.status_code}')
         return True
@@ -88,12 +89,13 @@ class ContainerRegistryClient:
     ) -> bool:
 
         endpoint = f'{self.__registry_url}/v2/{repository}/manifests/{id}'
-        logger.info(f'Azure endpoint: {endpoint}')
+        logger.info(f'Endpoint: {endpoint}')
 
-        response = await self.__http_client.get(
-            url=endpoint,
-            headers=self.get_auth_headers(),
-            timeout=None)
+        async with httpx.AsyncClient(timeout=None) as client:
+            response = await client.get(
+                url=endpoint,
+                headers=self.__get_auth_headers(),
+                timeout=None)
 
         logger.info(f'Response code: {response.status_code}')
         return response.json()

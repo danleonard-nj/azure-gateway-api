@@ -1,8 +1,12 @@
 
 
 class AzureScope:
-    ARM = 'https://management.core.windows.net/.default'
-    GRAPH = 'https://graph.microsoft.com/.default'
+    Arm = 'https://management.core.windows.net/.default'
+    Graph = 'https://graph.microsoft.com/.default'
+
+
+class AuthClient:
+    AzureGatewayApi = 'azure-gateway-api'
 
 
 class AzureAuthConfiguration:
