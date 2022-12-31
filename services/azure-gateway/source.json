@@ -2,5 +2,9 @@
   {
     "source": "configs/gateway/azure-gateway/config.json",
     "target": "./services/azure-gateway/config.json"
+  },
+  {
+    "source": "ca.crt",
+    "target": "./services/azure-gateway/clients/certificates/ca.crt"
   }
 ]
