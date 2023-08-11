@@ -1,5 +1,5 @@
 from framework.abstractions.abstract_request import RequestContextProvider
-from framework.dependency_injection.provider import InternalProvider
+from framework.di.static_provider import InternalProvider
 from framework.logger.providers import get_logger
 from framework.serialization.serializer import configure_serializer
 from quart import Quart
