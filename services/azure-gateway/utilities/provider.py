@@ -1,3 +1,4 @@
+from httpx import AsyncClient
 from clients.active_directory_client import ActiveDirectoryClient
 from clients.authentication_client import AuthenticationClient
 from clients.container_registry_client import ContainerRegistryClient
@@ -11,7 +12,6 @@ from framework.abstractions.abstract_request import RequestContextProvider
 from framework.auth.azure import AzureAd
 from framework.auth.configuration import AzureAdConfiguration
 from framework.clients.cache_client import CacheClientAsync
-from framework.clients.http_client import HttpClient
 from framework.configuration.configuration import Configuration
 from quart import Quart
 from services.active_directory_service import ActiveDirectoryService
@@ -29,6 +29,10 @@ class AdRole:
     READ = 'AzureGateway.Read'
     WRITE = 'AzureGateway.Write'
     IDENTITY = 'AzureGateway.Identity'
+
+
+def configure_http_client(container):
+    return AsyncClient(timeout=None)
 
 
 def configure_azure_ad(container):
@@ -71,6 +75,9 @@ class ContainerProvider(ProviderBase):
         container.add_singleton(
             dependency_type=AzureAd,
             factory=configure_azure_ad)
+        container.add_singleton(
+            dependency_type=AsyncClient,
+            factory=configure_http_client)
 
         container.add_singleton(AuthenticationClient)
         container.add_singleton(ContainerRegistryClient)

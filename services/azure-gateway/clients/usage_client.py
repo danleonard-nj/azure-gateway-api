@@ -1,7 +1,8 @@
 from typing import Dict
-from framework.clients.http_client import HttpClient
+
 from framework.configuration.configuration import Configuration
 from framework.logger.providers import get_logger
+from httpx import AsyncClient
 
 from clients.authentication_client import AuthenticationClient
 
@@ -13,10 +14,11 @@ class UsageClient:
     def __init__(
         self,
         configuration: Configuration,
-        auth_client: AuthenticationClient
+        auth_client: AuthenticationClient,
+        http_client: AsyncClient
     ):
         self.__authentication_client = auth_client
-        self.__http_client = HttpClient()
+        self.__http_client = http_client
 
         self.__usage_base_url = configuration.azure_usage.get(
             'usage_base_url')

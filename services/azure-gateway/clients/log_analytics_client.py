@@ -1,9 +1,9 @@
-from framework.clients.http_client import HttpClient
 from framework.configuration.configuration import Configuration
 from framework.logger.providers import get_logger
-from models.log_analytics import LogAnalyticsConfiguration
+from httpx import AsyncClient
 
 from clients.authentication_client import AuthenticationClient
+from models.log_analytics import LogAnalyticsConfiguration
 
 logger = get_logger(__name__)
 
@@ -12,10 +12,12 @@ class LogAnalyticsClient:
     def __init__(
         self,
         configuration: Configuration,
-        authentication_client: AuthenticationClient
+        authentication_client: AuthenticationClient,
+        http_client: AsyncClient
     ):
         self.__authentication_client = authentication_client
-        self.__http_client = HttpClient()
+        self.__http_client = http_client
+
         self.__configuration = LogAnalyticsConfiguration(
             configuration=configuration)
 

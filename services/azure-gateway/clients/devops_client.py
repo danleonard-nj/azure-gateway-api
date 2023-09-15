@@ -1,8 +1,9 @@
 import base64
 from typing import Dict
+
 from framework.configuration.configuration import Configuration
 from framework.logger.providers import get_logger
-from framework.clients.http_client import HttpClient
+from httpx import AsyncClient
 
 logger = get_logger(__name__)
 
@@ -10,14 +11,15 @@ logger = get_logger(__name__)
 class DevopsClient:
     def __init__(
         self,
-        configuration: Configuration
+        configuration: Configuration,
+        http_client: AsyncClient
     ):
         self.__username = configuration.devops.get('username')
         self.__pat = configuration.devops.get('pat')
         self.__organization = configuration.devops.get('organization')
         self.__base_url = configuration.devops.get('base_url')
 
-        self.__http_client = HttpClient()
+        self.__http_client = http_client
 
     def __get_headers(
         self

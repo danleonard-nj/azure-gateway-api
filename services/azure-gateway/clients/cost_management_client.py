@@ -1,13 +1,12 @@
 from typing import Dict
 
-from constants.azure import AzureScope
-from framework.clients.http_client import HttpClient
 from framework.configuration.configuration import Configuration
 from framework.logger.providers import get_logger
 from framework.serialization.utilities import serialize
-from models.cost_management import CostByProductQuery
-
+from httpx import AsyncClient
 from clients.authentication_client import AuthenticationClient
+from constants.azure import AzureScope
+from models.cost_management import CostByProductQuery
 
 logger = get_logger(__name__)
 
@@ -16,10 +15,11 @@ class CostManagementClient:
     def __init__(
         self,
         configuration: Configuration,
-        auth_client: AuthenticationClient
+        auth_client: AuthenticationClient,
+        http_client: AsyncClient
     ):
         self.__authentication_client = auth_client
-        self.__http_client = HttpClient()
+        self.__http_client = http_client
 
         self.__subscription_id = configuration.account.get(
             'subscription_id')
