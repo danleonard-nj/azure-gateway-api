@@ -1,4 +1,10 @@
-from framework.utilities.pinq import any
+
+
+def any(items, func):
+    for item in items:
+        if func(item):
+            return True
+    return False
 
 
 class Request:

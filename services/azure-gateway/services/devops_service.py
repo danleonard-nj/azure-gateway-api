@@ -1,12 +1,18 @@
-
-
-from clients.devops_client import DevopsClient
 from framework.logger.providers import get_logger
 from framework.serialization.utilities import serialize
-from framework.utilities.pinq import first
+
+from clients.devops_client import DevopsClient
 from models.devops import BuildDefinition, TriggeredBuildResponse
 
 logger = get_logger(__name__)
+
+
+def first(items, func=None):
+    for item in items:
+        if func is None:
+            return item
+        if func(item) is True:
+            return item
 
 
 class DevopsService:
