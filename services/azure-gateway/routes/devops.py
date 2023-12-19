@@ -1,6 +1,7 @@
 from services.devops_service import DevopsService
 from utilities.meta import MetaBlueprint
 
+
 devops_bp = MetaBlueprint('devops_bp', __name__)
 
 

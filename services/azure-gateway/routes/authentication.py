@@ -3,9 +3,8 @@ from clients.authentication_client import AuthenticationClient
 
 from framework.handlers.response_handler_async import response_handler
 from framework.auth.wrappers.azure_ad_wrappers import azure_ad_authorization
-
+from framework.di.service_provider import ServiceProvider
 from utilities.meta import MetaBlueprint
-
 
 authentication_bp = MetaBlueprint('authentication_bp', __name__)
 
@@ -33,7 +32,7 @@ async def scoped_token(container):
 
 
 @authentication_bp.configure('/api/authentication/resource', methods=['POST'], auth_scheme='identity')
-async def resource_token(container):
+async def resource_token(container: ServiceProvider):
     authentication_client: AuthenticationClient = container.resolve(
         AuthenticationClient)
     payload = await request.get_json()

@@ -2,6 +2,7 @@ from typing import List
 
 from clients.active_directory_client import ActiveDirectoryClient
 from models.active_directory import ActiveDirectoryApp
+from framework.configuration.configuration import Configuration
 
 
 class ActiveDirectoryService:

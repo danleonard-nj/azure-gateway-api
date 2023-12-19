@@ -99,13 +99,3 @@ class ContainerProvider(ProviderBase):
         container.add_singleton(ActiveDirectoryService)
 
         return container
-
-
-def add_container_hook(app: Quart):
-    def inject_container():
-        RequestContextProvider.initialize_provider(
-            app=app)
-
-    app.before_request_funcs.setdefault(
-        None, []).append(
-            inject_container)

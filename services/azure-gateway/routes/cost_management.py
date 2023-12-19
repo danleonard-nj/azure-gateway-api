@@ -4,6 +4,7 @@ from quart import request
 from services.cost_management_service import CostManagementService
 from utilities.meta import MetaBlueprint
 
+
 cost_management_bp = MetaBlueprint('cost_management_bp', __name__)
 logger = get_logger(__name__)
 

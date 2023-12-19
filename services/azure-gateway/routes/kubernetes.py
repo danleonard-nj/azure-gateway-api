@@ -3,6 +3,7 @@ from quart import abort, request
 from services.kubernetes_service import KubernetesService
 from utilities.meta import MetaBlueprint
 
+
 kubernetes_bp = MetaBlueprint('kubernetes_bp', __name__)
 
 

@@ -3,6 +3,7 @@ from quart import request
 from services.container_registry_service import ContainerRegistryService
 from utilities.meta import MetaBlueprint
 
+
 container_registry_bp = MetaBlueprint('container_registry_bp', __name__)
 
 logger = get_logger(__name__)
