@@ -2,3 +2,5 @@ framework==0.2.9
 kubernetes_asyncio
 uvicorn
 quart
+
+# issue w/ framework 0.2.9 - exception doesn't exist
