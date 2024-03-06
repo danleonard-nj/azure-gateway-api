@@ -14,20 +14,20 @@ class ContainerRegistryClient:
         configuration: Configuration,
         http_client: httpx.AsyncClient
     ):
-        self.__registry_url = configuration.azure_container_registry.get(
+        self._registry_url = configuration.azure_container_registry.get(
             'registry_url')
-        self.__registry_username = configuration.azure_container_registry.get(
+        self._registry_username = configuration.azure_container_registry.get(
             'registry_username')
-        self.__registry_password = configuration.azure_container_registry.get(
+        self._registry_password = configuration.azure_container_registry.get(
             'registry_password')
 
         self.__http_client = http_client
 
-    def __get_auth_headers(
+    def _get_auth_headers(
         self
     ) -> dict:
 
-        auth_pair = f'{self.__registry_username}:{self.__registry_password}'
+        auth_pair = f'{self._registry_username}:{self._registry_password}'
         auth_string = base64.b64encode(auth_pair.encode())
 
         return {
@@ -38,12 +38,12 @@ class ContainerRegistryClient:
         self
     ) -> dict:
 
-        endpoint = self.__registry_url + '/acr/v1/_catalog'
+        endpoint = self._registry_url + '/acr/v1/_catalog'
         logger.info(f'Endpoint: {endpoint}')
 
         response = await self.__http_client.get(
             url=endpoint,
-            headers=self.__get_auth_headers())
+            headers=self._get_auth_headers())
 
         logger.info(f'Response code: {response.status_code}')
         return response.json()
@@ -53,12 +53,12 @@ class ContainerRegistryClient:
         repository_name: str
     ) -> List[dict]:
 
-        endpoint = f'{self.__registry_url}/acr/v1/{repository_name}/_manifests'
+        endpoint = f'{self._registry_url}/acr/v1/{repository_name}/_manifests'
         logger.info(f'Endpoint: {endpoint}')
 
         response = await self.__http_client.get(
             url=endpoint,
-            headers=self.__get_auth_headers(),
+            headers=self._get_auth_headers(),
             timeout=None)
 
         logger.info(f'Response code: {response.status_code}')
@@ -70,12 +70,12 @@ class ContainerRegistryClient:
         id: str
     ) -> bool:
 
-        endpoint = f'{self.__registry_url}/v2/{repository}/manifests/{id}'
+        endpoint = f'{self._registry_url}/v2/{repository}/manifests/{id}'
         logger.info(f'Endpoint: {endpoint}')
 
         response = await self.__http_client.delete(
             url=endpoint,
-            headers=self.__get_auth_headers(),
+            headers=self._get_auth_headers(),
             timeout=None)
 
         logger.info(f'Response code: {response.status_code}')
@@ -87,12 +87,12 @@ class ContainerRegistryClient:
         id: str
     ) -> bool:
 
-        endpoint = f'{self.__registry_url}/v2/{repository}/manifests/{id}'
+        endpoint = f'{self._registry_url}/v2/{repository}/manifests/{id}'
         logger.info(f'Endpoint: {endpoint}')
 
         response = await self.__http_client.get(
             url=endpoint,
-            headers=self.__get_auth_headers(),
+            headers=self._get_auth_headers(),
             timeout=None)
 
         logger.info(f'Response code: {response.status_code}')

@@ -11,7 +11,7 @@ class CostManagementService:
         self,
         client: CostManagementClient
     ):
-        self.__client = client
+        self._client = client
 
     async def get_cost_by_product_data(
         self,
@@ -20,7 +20,7 @@ class CostManagementService:
         logger.info(
             f'Get cost management data: {serialize(request.to_dict())}')
 
-        result = await self.__client.get_cost_by_product_data(
+        result = await self._client.get_cost_by_product_data(
             start_date=request.start_date,
             end_date=request.end_date)
 

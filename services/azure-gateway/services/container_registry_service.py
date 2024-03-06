@@ -1,4 +1,5 @@
 from typing import Dict
+
 from clients.container_registry_client import ContainerRegistryClient
 from framework.logger.providers import get_logger
 
@@ -10,14 +11,14 @@ class ContainerRegistryService:
         self,
         client: ContainerRegistryClient
     ):
-        self.__client = client
+        self._client = client
 
     async def get_repositories(
         self
     ) -> Dict:
         logger.info(f'ACR: Fetch repository list')
 
-        result = await self.__client.get_repository_list()
+        result = await self._client.get_repository_list()
         return result
 
     async def get_manifests(
@@ -26,7 +27,7 @@ class ContainerRegistryService:
     ) -> Dict:
         logger.info(f'ACR: Fetch manifests: {repository_name}')
 
-        result = await self.__client.get_manifests(
+        result = await self._client.get_manifests(
             repository_name=repository_name)
         return result
 
@@ -37,7 +38,7 @@ class ContainerRegistryService:
     ) -> bool:
         logger.info(f'ACR: Fetch manifest: {repository}: {id}')
 
-        result = await self.__client.get_manifest(
+        result = await self._client.get_manifest(
             repository=repository,
             id=id)
 
@@ -50,7 +51,7 @@ class ContainerRegistryService:
     ) -> bool:
         logger.info(f'ACR: Delete manifest: {repository}: {id}')
 
-        result = await self.__client.delete_manifest(
+        result = await self._client.delete_manifest(
             repository=repository,
             id=id)
         return result

@@ -9,14 +9,14 @@ class KubernetesService:
         self,
         client: KubernetesClient
     ):
-        self.__client = client
+        self._client = client
 
     async def get_pod_images(
         self
     ):
         logger.info(f'AKS: get pod images')
 
-        pods = await self.__client.get_pod_images()
+        pods = await self._client.get_pod_images()
         return pods
 
     async def get_pods(
@@ -24,7 +24,7 @@ class KubernetesService:
     ):
         logger.info(f'AKS: get pods')
 
-        pods = await self.__client.get_pods()
+        pods = await self._client.get_pods()
         return pods
 
     async def get_logs(
@@ -36,7 +36,7 @@ class KubernetesService:
         logger.info(
             f'AKS: Get pod logs for pod: {namespace}:{pod}')
 
-        logs = await self.__client.get_logs(
+        logs = await self._client.get_logs(
             namespace=namespace,
             pod=pod,
             tail_lines=tail_lines or 100)

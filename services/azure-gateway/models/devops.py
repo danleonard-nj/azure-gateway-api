@@ -1,3 +1,19 @@
+from framework.serialization import Serializable
+
+
+class GetBuildByDefinitionRequest(Serializable):
+    def __init__(
+        self,
+        definition_id: int
+    ):
+        self.definition_id = definition_id
+
+    def to_dict(self) -> dict:
+        return {
+            'definition': {
+                'id': self.definition_id
+            }
+        }
 
 
 class BuildDefinition:

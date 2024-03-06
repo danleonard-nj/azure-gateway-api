@@ -38,6 +38,8 @@ async def startup():
 ContainerProvider.initialize_provider()
 InternalProvider.bind(ContainerProvider.get_service_provider())
 
+provider = ContainerProvider.get_service_provider()
+
 configure_serializer(app)
 
 if __name__ == '__main__':

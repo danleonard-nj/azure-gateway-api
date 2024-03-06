@@ -1,8 +1,7 @@
+from clients.authentication_client import AuthenticationClient
 from framework.configuration.configuration import Configuration
 from framework.logger.providers import get_logger
 from httpx import AsyncClient
-
-from clients.authentication_client import AuthenticationClient
 from models.log_analytics import LogAnalyticsConfiguration
 
 logger = get_logger(__name__)
@@ -15,18 +14,18 @@ class LogAnalyticsClient:
         authentication_client: AuthenticationClient,
         http_client: AsyncClient
     ):
-        self.__authentication_client = authentication_client
-        self.__http_client = http_client
+        self._authentication_client = authentication_client
+        self._http_client = http_client
 
-        self.__configuration = LogAnalyticsConfiguration(
+        self._configuration = LogAnalyticsConfiguration(
             configuration=configuration)
 
     async def get_log_analytics_headers(
         self
     ) -> dict:
         logger.info('Getting auth headers')
-        token = await self.__authentication_client.get_resource_token(
-            resource_name=self.__configuration.log_analytics_resource_scope
+        token = await self._authentication_client.get_resource_token(
+            resource_name=self._configuration.log_analytics_resource_scope
         )
 
         return {
@@ -38,12 +37,12 @@ class LogAnalyticsClient:
         self
     ) -> dict:
         logger.info('Getting auth headers')
-        token = await self.__authentication_client.get_resource_token(
-            resource_name=self.__configuration.management_resource_scope
+        token = await self._authentication_client.get_resource_token(
+            resource_name=self._configuration.management_resource_scope
         )
 
         logger.info(
-            f'Management Scope Token Request Headers: Resource: {self.__configuration.management_resource_scope}')
+            f'Management Scope Token Request Headers: Resource: {self._configuration.management_resource_scope}')
 
         return {
             'Authorization': f'Bearer {token}',
@@ -59,12 +58,12 @@ class LogAnalyticsClient:
             'query': query
         }
 
-        endpoint = f'{self.__configuration.log_analytics_base_url}/v1/workspaces/{self.__configuration.workspace_id}/query'
+        endpoint = f'{self._configuration.log_analytics_base_url}/v1/workspaces/{self._configuration.workspace_id}/query'
 
         headers = await self.get_log_analytics_headers()
         logger.info(f'Azure Query Endpoint: {endpoint}')
 
-        response = await self.__http_client.post(
+        response = await self._http_client.post(
             url=endpoint,
             json=body,
             headers=headers)
@@ -74,9 +73,9 @@ class LogAnalyticsClient:
     def _get_tables_endpoint(
         self
     ):
-        subscription = f'{self.__configuration.management_base_url}/subscriptions/{self.__configuration.subscription_id}'
-        resource = f'{subscription}/resourcegroups/{self.__configuration.resource_group}/providers/Microsoft.OperationalInsights'
-        return f'{resource}/workspaces/{self.__configuration.workspace_name}/tables?api-version=2020-08-01'
+        subscription = f'{self._configuration.management_base_url}/subscriptions/{self._configuration.subscription_id}'
+        resource = f'{subscription}/resourcegroups/{self._configuration.resource_group}/providers/Microsoft.OperationalInsights'
+        return f'{resource}/workspaces/{self._configuration.workspace_name}/tables?api-version=2020-08-01'
 
     async def get_tables(
         self
@@ -87,7 +86,7 @@ class LogAnalyticsClient:
         headers = await self.get_management_headers()
         logger.info(f'Azure Log Tables Endpoint: {endpoint}')
 
-        response = await self.__http_client.get(
+        response = await self._http_client.get(
             url=endpoint,
             headers=headers)
 

@@ -17,21 +17,21 @@ class UsageClient:
         auth_client: AuthenticationClient,
         http_client: AsyncClient
     ):
-        self.__authentication_client = auth_client
-        self.__http_client = http_client
+        self._authentication_client = auth_client
+        self._http_client = http_client
 
-        self.__usage_base_url = configuration.azure_usage.get(
+        self._usage_base_url = configuration.azure_usage.get(
             'usage_base_url')
-        self.__scope = configuration.azure_usage.get(
+        self._scope = configuration.azure_usage.get(
             'scope')
-        self.__subscription_id = configuration.account.get(
+        self._subscription_id = configuration.account.get(
             'subscription_id')
 
     async def get_headers(
         self
     ) -> Dict:
-        token = await self.__authentication_client.get_scoped_token(
-            scope=self.__scope)
+        token = await self._authentication_client.get_scoped_token(
+            scope=self._scope)
 
         return {
             'Authorization': f'Bearer {token}',
@@ -43,7 +43,7 @@ class UsageClient:
         start_date: str,
         end_date: str
     ) -> str:
-        subscription = f'{self.__usage_base_url}/subscriptions/{self.__subscription_id}'
+        subscription = f'{self._usage_base_url}/subscriptions/{self._subscription_id}'
         resource = f'{subscription}/providers/Microsoft.Consumption/usageDetails'
         usage = f"{resource}?api-version=2021-01-01&$filter=properties/usageDate"
 
@@ -63,7 +63,7 @@ class UsageClient:
         headers = await self.get_headers()
         logger.info(f'Azure endpoint: {endpoint}')
 
-        response = await self.__http_client.get(
+        response = await self._http_client.get(
             url=endpoint,
             headers=headers)
 

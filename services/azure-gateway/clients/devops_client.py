@@ -5,6 +5,8 @@ from framework.configuration.configuration import Configuration
 from framework.logger.providers import get_logger
 from httpx import AsyncClient
 
+from models.devops import GetBuildByDefinitionRequest
+
 logger = get_logger(__name__)
 
 
@@ -14,18 +16,18 @@ class DevopsClient:
         configuration: Configuration,
         http_client: AsyncClient
     ):
-        self.__username = configuration.devops.get('username')
-        self.__pat = configuration.devops.get('pat')
-        self.__organization = configuration.devops.get('organization')
-        self.__base_url = configuration.devops.get('base_url')
+        self._username = configuration.devops.get('username')
+        self._pat = configuration.devops.get('pat')
+        self._organization = configuration.devops.get('organization')
+        self._base_url = configuration.devops.get('base_url')
 
-        self.__http_client = http_client
+        self._http_client = http_client
 
-    def __get_headers(
+    def _get_headers(
         self
     ) -> Dict:
         basic_auth = base64.b64encode(
-            f'{self.__username}:{self.__pat}'.encode())
+            f'{self._username}:{self._pat}'.encode())
 
         return {
             'Authorization': f'Basic {basic_auth.decode()}',
@@ -38,13 +40,13 @@ class DevopsClient:
     ):
         logger.info(f'DevOps: Fetch builds for project: {project}')
 
-        segment = f'{self.__organization}/{project}/_apis/build/definitions?api-version=6.0'
-        endpoint = f'{self.__base_url}/{segment}'
+        segment = f'{self._organization}/{project}/_apis/build/definitions?api-version=6.0'
+        endpoint = f'{self._base_url}/{segment}'
 
         logger.info(f'Endpoint: {endpoint}')
-        response = await self.__http_client.get(
+        response = await self._http_client.get(
             url=endpoint,
-            headers=self.__get_headers())
+            headers=self._get_headers())
 
         logger.info(f'Response status: {response.status_code}')
         return response.json().get('value')
@@ -57,18 +59,15 @@ class DevopsClient:
         logger.info(
             f"DevOps: triggering build '{definition_id}' in project: {project}")
 
-        data = {
-            'definition': {
-                'id': definition_id
-            }
-        }
+        req = GetBuildByDefinitionRequest(
+            definition_id=definition_id)
 
-        headers = self.__get_headers()
+        headers = self._get_headers()
         logger.info(headers)
 
-        response = await self.__http_client.post(
-            url=f'{self.__base_url}/{self.__organization}/{project}/_apis/build/builds?api-version=6.0',
-            json=data,
+        response = await self._http_client.post(
+            url=f'{self._base_url}/{self._organization}/{project}/_apis/build/builds?api-version=6.0',
+            json=req.to_dict(),
             headers=headers)
 
         return response.json()

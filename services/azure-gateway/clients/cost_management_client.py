@@ -1,11 +1,11 @@
 from typing import Dict
 
+from clients.authentication_client import AuthenticationClient
+from constants.azure import AzureScope
 from framework.configuration.configuration import Configuration
 from framework.logger.providers import get_logger
 from framework.serialization.utilities import serialize
 from httpx import AsyncClient
-from clients.authentication_client import AuthenticationClient
-from constants.azure import AzureScope
 from models.cost_management import CostByProductQuery
 
 logger = get_logger(__name__)
@@ -18,27 +18,27 @@ class CostManagementClient:
         auth_client: AuthenticationClient,
         http_client: AsyncClient
     ):
-        self.__authentication_client = auth_client
-        self.__http_client = http_client
+        self._authentication_client = auth_client
+        self._http_client = http_client
 
-        self.__subscription_id = configuration.account.get(
+        self._subscription_id = configuration.account.get(
             'subscription_id')
-        self.__base_url = configuration.azure_resource_management.get(
+        self._base_url = configuration.azure_resource_management.get(
             'base_url')
 
-    def __get_management_base_url(
+    def _get_management_base_url(
         self
     ) -> str:
-        return f'{self.__base_url}/subscriptions/{self.__subscription_id}'
+        return f'{self._base_url}/subscriptions/{self._subscription_id}'
 
-    async def __get_headers(
+    async def _get_headers(
         self
     ) -> Dict:
 
         logger.info(
             f'Fetching Azure auth token for scope: {AzureScope.ManagementDefault}')
 
-        token = await self.__authentication_client.get_scoped_token(
+        token = await self._authentication_client.get_scoped_token(
             scope=AzureScope.ManagementDefault)
 
         logger.info(f'Token: {token}')
@@ -62,13 +62,13 @@ class CostManagementClient:
         query = cost_by_product_query.get_query()
         logger.info(f'Query: {serialize(query)}')
 
-        base_url = self.__get_management_base_url()
+        base_url = self._get_management_base_url()
         endpoint = f'{base_url}/providers/Microsoft.CostManagement/query?api-version=2021-10-01'
 
-        headers = await self.__get_headers()
+        headers = await self._get_headers()
         logger.info(f'Endpoint: {endpoint}')
 
-        response = await self.__http_client.post(
+        response = await self._http_client.post(
             url=endpoint,
             headers=headers,
             json=query,

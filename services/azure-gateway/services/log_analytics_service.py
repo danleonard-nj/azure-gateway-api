@@ -9,14 +9,14 @@ class LogAnalyticsService:
         self,
         client: LogAnalyticsClient
     ):
-        self.__client = client
+        self._client = client
 
     async def query(
         self,
         query: str
     ) -> dict:
         logger.info(f'Azure Log Query: Request: {query}')
-        response = await self.__client.query(
+        response = await self._client.query(
             query=query)
 
         return response
@@ -26,5 +26,5 @@ class LogAnalyticsService:
     ) -> dict:
         logger.info(f'Fetching Azure Log Tables')
 
-        response = await self.__client.get_tables()
+        response = await self._client.get_tables()
         return response

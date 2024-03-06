@@ -14,8 +14,8 @@ class AuthenticationClient:
         cache_client: CacheClientAsync,
         identity_client: IdentityClient
     ):
-        self.__cache_client = cache_client
-        self.__identity_client = identity_client
+        self._cache_client = cache_client
+        self._identity_client = identity_client
 
     async def get_scoped_token(
         self,
@@ -28,20 +28,20 @@ class AuthenticationClient:
             scope=scope)
         logger.info(f'Cache key: {cache_key}')
 
-        cached_token = await self.__cache_client.get_cache(
+        cached_token = await self._cache_client.get_cache(
             key=cache_key)
 
         if cached_token is not None:
             logger.info(f'Returning cached token: {cache_key}')
             return cached_token
 
-        token = await self.__identity_client.get_token(
+        token = await self._identity_client.get_token(
             client_name='azure-gateway-api',
             scope=scope)
 
         logger.info(f'Token: {token}')
 
-        await self.__cache_client.set_cache(
+        await self._cache_client.set_cache(
             key=cache_key,
             value=token,
             ttl=60)
@@ -58,20 +58,20 @@ class AuthenticationClient:
             resource_name=resource_name)
 
         logger.info(f'Cache key: {cache_key}')
-        cached_token = await self.__cache_client.get_cache(
+        cached_token = await self._cache_client.get_cache(
             key=cache_key)
 
         if cached_token is not None:
             logger.info(f'Returning cached token: {cached_token}')
             return cached_token
 
-        token = await self.__identity_client.get_token(
+        token = await self._identity_client.get_token(
             client_name=AuthClient.AzureGatewayApi,
             scope=AzureScope.Arm)
 
         logger.info(f'Token: {token}')
 
-        await self.__cache_client.set_cache(
+        await self._cache_client.set_cache(
             key=cache_key,
             value=token,
             ttl=60)

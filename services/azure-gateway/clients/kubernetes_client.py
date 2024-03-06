@@ -12,28 +12,28 @@ class KubernetesClient:
         self,
         configuration: Configuration
     ):
-        self.__base_url = configuration.azure_kubernetes.get(
+        self._base_url = configuration.azure_kubernetes.get(
             'host_url')
-        self.__token = configuration.azure_kubernetes.get(
+        self._token = configuration.azure_kubernetes.get(
             'token')
-        self.__cert_path = configuration.azure_kubernetes.get(
+        self._cert_path = configuration.azure_kubernetes.get(
             'certificate_path')
 
     def __get_headers(
         self
-    ) -> Dict:
+    ) -> dict:
         return {
-            'Authorization': f'Bearer {self.__token}'
+            'Authorization': f'Bearer {self._token}'
         }
 
-    async def __get_pods(
+    async def _get_pods(
         self
-    ) -> Dict:
+    ) -> dict:
         logger.info(f'Fetching pods')
 
-        async with httpx.AsyncClient(verify=self.__cert_path) as client:
+        async with httpx.AsyncClient(verify=self._cert_path) as client:
             response = await client.get(
-                url=f'{self.__base_url}/api/v1/pods',
+                url=f'{self._base_url}/api/v1/pods',
                 headers=self.__get_headers(),
                 timeout=None)
 
@@ -41,8 +41,8 @@ class KubernetesClient:
 
     async def get_pods(
         self
-    ):
-        pods = await self.__get_pods()
+    ) -> dict:
+        pods = await self._get_pods()
 
         results = []
         for pod in pods.get('items', []):
@@ -57,15 +57,17 @@ class KubernetesClient:
 
     async def get_pod_images(
         self
-    ) -> Dict:
+    ) -> dict:
 
-        pods = await self.__get_pods()
+        pods = await self._get_pods()
+
+        images = [
+            x.get('spec').get('containers')[0].get('image')
+            for x in pods.get('items')
+        ]
 
         return {
-            'pods': ([
-                x.get('spec').get('containers')[0].get('image')
-                for x in pods.get('items')
-            ])
+            'pods': images
         }
 
     async def get_logs(
@@ -75,9 +77,9 @@ class KubernetesClient:
         tail_lines=100
     ):
 
-        async with httpx.AsyncClient(verify=self.__cert_path) as client:
+        async with httpx.AsyncClient(verify=self._cert_path) as client:
             response = await client.get(
-                url=f'{self.__base_url}/api/v1/namespaces/{namespace}/pods/{pod}/log?tailLines={tail_lines}',
+                url=f'{self._base_url}/api/v1/namespaces/{namespace}/pods/{pod}/log?tailLines={tail_lines}',
                 headers=self.__get_headers(),
                 timeout=None)
 

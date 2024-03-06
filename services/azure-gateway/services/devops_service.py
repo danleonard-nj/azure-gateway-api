@@ -1,18 +1,10 @@
+from clients.devops_client import DevopsClient
 from framework.logger.providers import get_logger
 from framework.serialization.utilities import serialize
-
-from clients.devops_client import DevopsClient
 from models.devops import BuildDefinition, TriggeredBuildResponse
+from utilities.utils import first
 
 logger = get_logger(__name__)
-
-
-def first(items, func=None):
-    for item in items:
-        if func is None:
-            return item
-        if func(item) is True:
-            return item
 
 
 class DevopsService:
@@ -20,7 +12,7 @@ class DevopsService:
         self,
         client: DevopsClient
     ):
-        self.__client = client
+        self._client = client
 
     async def get_builds(
         self,
@@ -28,7 +20,7 @@ class DevopsService:
     ):
         logger.info(f'Get builds for project: {project}')
 
-        result = await self.__client.get_build_definitions(
+        result = await self._client.get_build_definitions(
             project=project)
 
         logger.info('Parsing build definition models')
@@ -53,7 +45,7 @@ class DevopsService:
         logger.info(
             f"Triggering build definition '{definition_id}' in project {project}")
 
-        response = await self.__client.trigger_build_by_definition(
+        response = await self._client.trigger_build_by_definition(
             project=project,
             definition_id=definition_id)
 
@@ -71,7 +63,7 @@ class DevopsService:
         logger.info(f"Triggering build '{build_name}' in project {project}")
 
         logger.info('Fetching build definitions')
-        definitions = await self.__client.get_build_definitions(
+        definitions = await self._client.get_build_definitions(
             project=project)
 
         definition_models = [
@@ -89,7 +81,7 @@ class DevopsService:
         logger.info(
             f'Build definition found: {serialize(definition.to_dict())}')
 
-        response = await self.__client.trigger_build_by_definition(
+        response = await self._client.trigger_build_by_definition(
             project=project,
             definition_id=definition.id)
 
